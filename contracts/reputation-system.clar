@@ -118,3 +118,24 @@
         )
     )
 )
+
+;; Read-only functions
+(define-read-only (get-user-score (user principal))
+    (map-get? user-scores user)
+)
+
+(define-read-only (is-authorized-contract (contract principal))
+    (default-to false (map-get? authorized-contracts contract))
+)
+
+(define-private (calculate-total-score (lending uint) (governance uint) (prediction uint))
+    (/ (+ lending governance prediction) u3)
+)
+
+;; Utilities
+(define-private (to-uint (value int))
+    (if (< value 0)
+        u0
+        (to-uint value)
+    )
+)
