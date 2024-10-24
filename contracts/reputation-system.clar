@@ -96,3 +96,25 @@
         )
     )
 )
+
+(define-public (update-prediction-score (user principal) (points int))
+    (begin
+        (asserts! (is-authorized-contract contract-caller) ERR_UNAUTHORIZED)
+        (asserts! (>= points -100) ERR_INVALID_SCORE)
+        (asserts! (<= points 100) ERR_INVALID_SCORE)
+        (match (map-get? user-scores user)
+            scores (ok (map-set user-scores user
+                (merge scores {
+                    prediction-score: (+ (get prediction-score scores) (to-uint points)),
+                    total-score: (calculate-total-score
+                        (get lending-score scores)
+                        (get governance-score scores)
+                        (+ (get prediction-score scores) (to-uint points))
+                    ),
+                    last-updated: block-height
+                })
+            ))
+            ERR_NOT_FOUND
+        )
+    )
+)
