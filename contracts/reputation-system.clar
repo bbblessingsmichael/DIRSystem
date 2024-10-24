@@ -38,3 +38,17 @@
         (ok (map-set authorized-contracts contract-principal true))
     )
 )
+
+;; Core reputation functions
+(define-public (initialize-user (user principal))
+    (begin
+        (asserts! (is-authorized-contract contract-caller) ERR_UNAUTHORIZED)
+        (ok (map-set user-scores user {
+            total-score: u0,
+            lending-score: u0,
+            governance-score: u0,
+            prediction-score: u0,
+            last-updated: block-height
+        }))
+    )
+)
