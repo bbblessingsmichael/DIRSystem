@@ -23,3 +23,18 @@
 )
 
 (define-data-var admin principal tx-sender)
+
+;; Administrative functions
+(define-public (set-admin (new-admin principal))
+    (begin
+        (asserts! (is-eq tx-sender (var-get admin)) ERR_UNAUTHORIZED)
+        (ok (var-set admin new-admin))
+    )
+)
+
+(define-public (add-authorized-contract (contract-principal principal))
+    (begin
+        (asserts! (is-eq tx-sender (var-get admin)) ERR_UNAUTHORIZED)
+        (ok (map-set authorized-contracts contract-principal true))
+    )
+)
